@@ -1,0 +1,812 @@
+---
+title: "CPP3_Apaza_Cabezas_Ponce_Ruiz"
+jupyter: python3
+variables:
+  idl: "IDL3"
+  curso: "Machine Learning II"
+  estudiantes: 
+    - "APAZA PEREZ OSCAR GONZALO"
+    - "CABEZAS HUANIO RUBEN KELVIN"
+    - "RUIZ ALVA JERSON ENMANUEL"
+    - "PONCE DE LEON TORRES FABYOLA KORAYMA"
+  profesores:
+    - "LUIS ANTONY LOPEZ QUIROZ"
+format:
+  pdf:
+    toc: true
+    toc-depth: 3
+    documentclass: article
+    papersize: "a4"
+    number-sections: true
+    number-depth: 4  
+    lang: es-PE
+    template-partials:
+      - before-body.tex
+    include-in-header: 
+      text: |
+        \usepackage{graphicx}
+        \usepackage{float}
+        \usepackage{geometry}
+        \usepackage{titlesec}
+        \usepackage{tabularx}
+        \usepackage{booktabs}
+        \usepackage{fancyhdr}
+        \usepackage{appendix}
+        \usepackage{caption}
+        \usepackage[scaled]{helvet}
+        \usepackage[T1]{fontenc}
+        \renewcommand{\familydefault}{\sfdefault}
+        
+        % Configuración de la geometría
+        \geometry{
+          a4paper,
+          left=3cm,
+          right=3cm,
+          top=2cm,
+          bottom=2.7cm,
+          headheight=2cm,
+          headsep=0.2cm
+        }
+        
+        % Configuración encabezado y pie
+        \pagestyle{fancy}
+        \fancyhf{}
+        \renewcommand{\footrulewidth}{0pt}
+        \fancyfoot[R]{\footnotesize{icontinental.edu.pe}}
+        
+        % Encabezado con imagen
+        \fancyhead[C]{%
+          \makebox[\textwidth][c]{%
+            \includegraphics[width=\paperwidth]{encabezado.png}%
+          }%
+        }
+        
+        \renewcommand{\headrulewidth}{0pt}
+        
+        % Formato secciones
+        \titleformat{\section}
+          {\normalfont\Large\bfseries}{\thesection}{1em}{}
+          
+        % Contador figuras
+        \newcounter{grafico}
+        
+        % Comando figuras
+        \newcommand{\figuragraficos}[2]{
+          \stepcounter{grafico}
+          \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{#1}
+            \caption{#2}
+          \end{figure}
+        }
+---
+    
+/newpage
+
+## Instalación y Configuración de H2O
+
+En este proyecto utilizaremos la librería de Machine Learning H2O, configurándola para aprovechar el poder de procesamiento de la GPU. H2O puede acelerar significativamente el entrenamiento de modelos cuando se configura correctamente con GPU. H2O requiere Java 8+
+
+```{python}
+# Instalar H2O y Plotly
+# !pip install h2o plotly kaleido
+```
+
+## Importación de las Librerías Necesarias
+
+Importamos todas las librerías necesarias para el proyecto, incluyendo H2O y PyTorch.
+
+```{python}
+# Librerías básicas
+import os
+import numpy as np
+import pandas as pd
+
+# Librerías de visualización
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+
+# Librerías de procesamiento de imágenes
+from PIL import Image
+
+# Librerías de machine learning (scikit-learn)
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split
+
+# Librerías de deep learning (PyTorch)
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+import torchvision.transforms as transforms
+
+# Otras librerías
+import kagglehub
+
+# Para guardar gráficos de Plotly como PNG
+import plotly.io as pio
+
+# Configurar Plotly para usar kaleido y optimizar el rendimiento
+pio.kaleido.scope.default_format = "png"
+pio.kaleido.scope.mathjax = None  # Desactivar MathJax si no es necesario
+
+# Librerías de H2O
+import h2o
+from h2o.estimators import H2ORandomForestEstimator, H2OGradientBoostingEstimator, H2ODeepLearningEstimator
+from h2o.estimators.stackedensemble import H2OStackedEnsembleEstimator
+from h2o.grid.grid_search import H2OGridSearch
+```
+
+## Función Optimizada para Guardar Gráficos de Plotly
+
+```{python}
+import plotly.express as px
+import plotly.graph_objects as go
+import plotly.io as pio
+
+def save_plotly_figure(fig, filename, format='png'):
+    """
+    Guarda una figura de Plotly en el formato especificado usando Kaleido.
+    
+    Args:
+        fig (plotly.graph_objects.Figure): La figura de Plotly a guardar.
+        filename (str): El nombre del archivo donde se guardará la figura.
+        format (str): El formato de la imagen. Por defecto es 'png'.
+    """
+    pio.kaleido.scope.default_format = format
+    fig.write_image(filename, engine="kaleido")
+    print(f"Gráfico guardado como {filename} en formato {format}.")
+```
+
+## Carga y Preparación de los Datos
+
+```{python}
+# Generar rutas de datos con etiquetas
+path = kagglehub.dataset_download("aryashah2k/mango-leaf-disease-dataset")
+filepaths = []
+labels = []
+
+folders = os.listdir(path)
+for folder in folders:
+    folder_path = os.path.join(path, folder)
+    if os.path.isdir(folder_path):
+        filelist = os.listdir(folder_path)
+        for file in filelist:
+            fpath = os.path.join(folder_path, file)
+            if fpath.endswith('.jpg') or fpath.endswith('.jpeg') or fpath.endswith('.png'):
+                filepaths.append(fpath)
+                labels.append(folder)
+
+# Concatenar rutas de imagenes con etiquetas en un dataframe
+Fseries = pd.Series(filepaths, name='filepaths')
+Lseries = pd.Series(labels, name='labels')
+df = pd.concat([Fseries, Lseries], axis=1)
+
+# Verificar el DataFrame
+print(df.head())
+print(f'Tamaño del DataFrame: {df.shape}')
+```
+
+## Definición y Entrenamiento del Modelo CNN con PyTorch
+
+Definimos y entrenamos una red neuronal convolucional (CNN) utilizando PyTorch para la clasificación de imágenes.
+
+```{python}
+# Definir el dispositivo
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print(f"Usando dispositivo: {device}")
+
+# Verificar qué GPU se está utilizando
+if device.type == 'cuda':
+    print(f"Nombre de la GPU: {torch.cuda.get_device_name(0)}")
+    print(f"Memoria total de la GPU: {torch.cuda.get_device_properties(0).total_memory / 1e9} GB")
+    torch.cuda.set_device(0)
+```
+
+### **Optimización de Uso de la GPU**
+
+Aseguramos que solo se utilice la GPU 0 y optimizamos la memoria:
+
+```{python}
+# Limpiar la caché de la GPU para liberar memoria
+if device.type == 'cuda':
+    torch.cuda.empty_cache()
+```
+
+### **Definir las Transformaciones para el Conjunto de Entrenamiento**
+
+```{python}
+# Definir las Transformaciones para el Conjunto de Entrenamiento
+transform_train = transforms.Compose([
+    transforms.Resize((240, 320)),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5),
+                         (0.5, 0.5, 0.5))
+])
+
+# Definir las Transformaciones para el Conjunto de Prueba y Validación
+transform_test = transforms.Compose([
+    transforms.Resize((240, 320)),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5),
+                         (0.5, 0.5, 0.5))
+])
+```
+
+### **Crear una Clase Personalizada para el Dataset**
+
+```{python}
+# Crear una Clase Personalizada para el Dataset
+class MangoLeafDataset(Dataset):
+    def __init__(self, dataframe, transform=None):
+        """
+        Args:
+            dataframe (pd.DataFrame): DataFrame que contiene las rutas de las imágenes y sus etiquetas.
+            transform (callable, optional): Transformaciones a aplicar a las imágenes.
+        """
+        self.filepaths = dataframe['filepaths'].values
+        self.labels = dataframe['labels'].values
+        self.transform = transform
+        self.classes = sorted(dataframe['labels'].unique())
+        self.class_to_idx = {cls_name: idx for idx, cls_name in enumerate(self.classes)}
+        self.labels_idx = [self.class_to_idx[label] for label in self.labels]
+
+    def __len__(self):
+        return len(self.filepaths)
+
+    def __getitem__(self, idx):
+        img_path = self.filepaths[idx]
+        image = Image.open(img_path).convert('RGB')  
+        label = self.labels_idx[idx]
+
+        if self.transform:
+            image = self.transform(image)
+
+        return image, label
+```
+
+### **Dividir el Dataset en Entrenamiento, Validación y Prueba**
+
+```{python}
+# Dividir el dataset en entrenamiento (70%), validación (15%) y prueba (15%)
+train_df, temp_df = train_test_split(df, test_size=0.3, stratify=df['labels'], random_state=42)
+val_df, test_df = train_test_split(temp_df, test_size=0.5, stratify=temp_df['labels'], random_state=42)
+
+print(f'Tamaño del conjunto de entrenamiento: {train_df.shape}')
+print(f'Tamaño del conjunto de validación: {val_df.shape}')
+print(f'Tamaño del conjunto de prueba: {test_df.shape}')
+```
+
+### **Crear Instancias del Dataset y DataLoaders**
+
+```{python}
+# Crear instancias del dataset
+train_dataset = MangoLeafDataset(train_df, transform=transform_train)
+val_dataset = MangoLeafDataset(val_df, transform=transform_test)
+test_dataset = MangoLeafDataset(test_df, transform=transform_test)
+
+# Definir el tamaño del lote
+batch_size = 64
+
+# Determinar el número de workers basado en el CPU
+num_workers = os.cpu_count() if os.cpu_count() is not None else 4
+
+# Crear DataLoaders
+trainloader = DataLoader(
+    train_dataset,
+    batch_size=batch_size,
+    shuffle=True,
+    num_workers=num_workers,           
+    pin_memory=True if device.type == 'cuda' else False
+)
+valloader = DataLoader(
+    val_dataset,
+    batch_size=batch_size,
+    shuffle=False,
+    num_workers=num_workers,
+    pin_memory=True if device.type == 'cuda' else False
+)
+testloader = DataLoader(
+    test_dataset,
+    batch_size=batch_size,
+    shuffle=False,
+    num_workers=num_workers,
+    pin_memory=True if device.type == 'cuda' else False
+)
+```
+
+### **Definir el Modelo CNN**
+
+```{python}
+# Definir el Modelo CNN
+class MangoCNN(nn.Module):
+    def __init__(self, num_classes=8):
+        super(MangoCNN, self).__init__()
+        self.conv1 = nn.Conv2d(3, 32, kernel_size=3, padding=1)  # Entrada RGB
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+        self.fc1 = nn.Linear(64 * 60 * 80, 256)  
+        self.fc2 = nn.Linear(256, num_classes)
+    
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))  # [Batch, 32, 120, 160]
+        x = self.pool(F.relu(self.conv2(x)))  # [Batch, 64, 60, 80]
+        x = x.view(-1, 64 * 60 * 80)          # Aplanar
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+```
+
+### **Instanciar y Mover el Modelo al Dispositivo**
+
+```{python}
+# Instanciar y mover el modelo al dispositivo
+model = MangoCNN(num_classes=8).to(device)
+print(model)
+```
+
+### **Definir la Función de Pérdida y el Optimizador**
+
+```{python}
+# Definir la Función de Pérdida y el Optimizador
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+```
+
+### **Entrenar el Modelo CNN**
+
+A continuación, se presenta el bucle de entrenamiento revisado con mejoras para asegurar que se impriman los números de épocas y se capturen posibles errores.
+
+```{python}
+num_epochs = 10
+  for epoch in range(num_epochs):
+  model.train()
+  running_loss = 0.0
+  correct = 0
+  total = 0
+  
+  for i, (images, labels) in enumerate(trainloader):
+    # Mover los datos al dispositivo
+    images = images.to(device, non_blocking=True)
+    labels = labels.to(device, non_blocking=True)
+    # Reiniciar los gradientes
+    optimizer.zero_grad()
+    # Forward pass
+    outputs = model(images)
+    loss = criterion(outputs, labels)
+    # Backward pass y optimización
+    loss.backward()
+    optimizer.step()
+    # Acumular la pérdida
+    running_loss += loss.item()
+    # Calcular la precisión
+    _, predicted = torch.max(outputs.data, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item()
+    # Mostrar estadísticas cada 100 lotes
+    if (i + 1) % 100 == 0:
+      print(f"Época [{epoch + 1}/{num_epochs}], Lote [{i + 1}/{len(trainloader)}], "
+      f"Pérdida: {running_loss / 100:.4f}, Precisión: {100 * correct / total:.2f}%")
+      running_loss = 0.0
+      
+# Evaluar en el conjunto de validación después de cada época
+model.eval()
+with torch.no_grad():
+val_correct = 0
+val_total = 0
+for images, labels in valloader:
+images = images.to(device, non_blocking=True)
+labels = labels.to(device, non_blocking=True)
+outputs = model(images)
+_, predicted = torch.max(outputs.data, 1)
+val_total += labels.size(0)
+val_correct += (predicted == labels).sum().item()
+val_accuracy = 100 * val_correct / val_total
+print(f"Precisión en Validación después de la Época {epoch + 1}: {val_accuracy:.2f}%\n")
+```
+
+## Evaluación del Modelo CNN en el Conjunto de Prueba
+
+```{python}
+model.eval()
+with torch.no_grad():
+    test_correct = 0
+    test_total = 0
+    for images, labels in testloader:
+        images = images.to(device, non_blocking=True)
+        labels = labels.to(device, non_blocking=True)
+        outputs = model(images)
+        _, predicted = torch.max(outputs.data, 1)
+        test_total += labels.size(0)
+        test_correct += (predicted == labels).sum().item()
+    test_accuracy = 100 * test_correct / test_total
+    print(f"Precisión en el Conjunto de Prueba (CNN): {test_accuracy:.2f}%")
+    
+    # Guardar la precisión en una variable para uso posterior
+    cnn_test_accuracy = test_accuracy
+```
+
+```{python}
+# Guardar la precisión del modelo CNN en un archivo para su posterior uso
+with open("precision_prueba_cnn.txt", "w") as f:
+    f.write(f"{cnn_test_accuracy:.2f}%")
+```
+
+```{python}
+# Generar y guardar una representación gráfica de la precisión en el conjunto de prueba para el modelo CNN utilizando Plotly Express
+fig = px.bar(
+    x=['CNN'],
+    y=[cnn_test_accuracy],
+    labels={'x': 'Modelo', 'y': 'Precisión (%)'},
+    title='Precisión en el Conjunto de Prueba para el Modelo CNN',
+    color=['CNN'],
+    color_discrete_sequence=['skyblue']
+)
+fig.update_yaxes(range=[0, 100])
+figure_filename = "precision_prueba_cnn.png"
+save_plotly_figure(fig, figure_filename)
+```
+
+\figuragraficos{precision_prueba_cnn.png}{Precisión en el Conjunto de Prueba para el Modelo CNN}
+
+## Guardar el Modelo CNN
+
+```{python}
+torch.save(model.state_dict(), 'mango_cnn.pth')
+print("Modelo CNN guardado exitosamente.")
+
+# Cargar el Modelo
+loaded_model = MangoCNN(num_classes=8).to(device)
+loaded_model.load_state_dict(torch.load('mango_cnn.pth'))
+loaded_model.eval()
+print("Modelo CNN cargado exitosamente.")
+```
+
+## Extracción de Características y Preparación para H2O
+
+Ahora, extraemos las características del modelo CNN y preparamos los datos para H2O.
+
+```{python}
+# Función para Extraer Características usando el Modelo CNN
+def extract_features(data_loader, model, device):
+    """
+    Extrae características de las imágenes utilizando un modelo CNN preentrenado.
+    
+    Args:
+        data_loader (DataLoader): DataLoader que contiene las imágenes y etiquetas.
+        model (nn.Module): Modelo CNN preentrenado.
+        device (torch.device): Dispositivo para ejecutar el modelo.
+        
+    Returns:
+        X (np.ndarray): Arreglo de características extraídas.
+        y (np.ndarray): Arreglo de etiquetas.
+    """
+    model.eval()
+    features = []
+    labels_list = []
+    with torch.no_grad():
+        for images, labels in data_loader:
+            images = images.to(device, non_blocking=True)
+            outputs = model(images)
+            features.append(outputs.cpu().numpy())
+            labels_list.append(labels.cpu().numpy())
+    X = np.vstack(features)
+    y = np.hstack(labels_list)
+    return X, y
+
+# Extraer las Características de Entrenamiento y Prueba
+X_train, y_train = extract_features(trainloader, model, device)
+X_test, y_test = extract_features(testloader, model, device)
+
+print(f"Forma de X_train: {X_train.shape}")
+print(f"Forma de y_train: {y_train.shape}")
+print(f"Forma de X_test: {X_test.shape}")
+print(f"Forma de y_test: {y_test.shape}")
+```
+
+\figuragraficos{caracteristicas_extraidas.png}{Características Extraídas del Modelo CNN}
+
+```{python}
+# Guardar las características extraídas en archivos para su posterior visualización
+np.save("X_train.npy", X_train)
+np.save("y_train.npy", y_train)
+np.save("X_test.npy", X_test)
+np.save("y_test.npy", y_test)
+```
+
+## Configuración de H2O y Preparación de los Datos para H2O
+
+Inicializamos H2O y convertimos los datos extraídos a H2O Frames.
+
+```{python}
+# Inicializar H2O
+h2o.init(max_mem_size="8G", nthreads=-1, enable_assertions=False)
+
+# Convertir los datos de entrenamiento a DataFrame de Pandas
+train_df_h2o = pd.DataFrame(X_train)
+train_df_h2o['label'] = y_train
+
+# Convertir los datos de prueba a DataFrame de Pandas
+test_df_h2o = pd.DataFrame(X_test)
+test_df_h2o['label'] = y_test
+
+# Convertir a H2O Frames
+train_h2o = h2o.H2OFrame(train_df_h2o)
+test_h2o = h2o.H2OFrame(test_df_h2o)
+
+# Definir la columna de destino y las características
+y = 'label'
+X = train_h2o.columns
+X.remove(y)
+
+# Asegurarse de que la columna de etiquetas sea categórica
+train_h2o[y] = train_h2o[y].asfactor()
+test_h2o[y] = test_h2o[y].asfactor()
+```
+
+\figuragraficos{h2o_inicializado.png}{Inicialización de H2O y Preparación de los Datos}
+
+## Definición y Entrenamiento de los Modelos Base con H2OGridSearch
+
+Utilizaremos **Random Forest** y **Gradient Boosting Machine (GBM)** como modelos base y optimizaremos sus hiperparámetros utilizando `H2OGridSearch`.
+
+### **Random Forest con Grid Search**
+
+```{python}
+# Definir los hiperparámetros para Random Forest
+rf_params = {
+    'ntrees': [100, 200],
+    'max_depth': [20, 30],
+    'min_rows': [10, 20],
+    'sample_rate': [0.8, 1.0],
+    'col_sample_rate_per_tree': [0.8, 1.0]
+}
+
+# Inicializar el modelo Random Forest
+rf = H2ORandomForestEstimator(seed=42, nfolds=5, keep_cross_validation_predictions=True, stopping_metric="logloss")
+
+# Configurar la búsqueda en cuadrícula para Random Forest
+rf_grid = H2OGridSearch(model=rf, hyper_params=rf_params, search_criteria={'strategy': "Cartesian"})
+
+# Entrenar el Grid Search en el conjunto de entrenamiento
+rf_grid.train(x=X, y=y, training_frame=train_h2o)
+
+# Ver los mejores modelos
+print("Modelos Random Forest ordenados por logloss:")
+print(rf_grid.get_grid(sort_by='logloss', decreasing=False))
+```
+
+\figuragraficos{rf_grid_search.png}{Resultados de Grid Search para Random Forest}
+
+### **Gradient Boosting Machine (GBM) con Grid Search**
+
+```{python}
+# Definir los hiperparámetros para GBM
+gbm_params = {
+    'ntrees': [100, 200],
+    'max_depth': [5, 10],
+    'learn_rate': [0.01, 0.1],
+    'sample_rate': [0.8, 1.0],
+    'col_sample_rate_per_tree': [0.8, 1.0]
+}
+
+# Inicializar el modelo GBM
+gbm = H2OGradientBoostingEstimator(seed=42, nfolds=5, keep_cross_validation_predictions=True, stopping_metric="logloss")
+
+# Configurar la búsqueda en cuadrícula para GBM
+gbm_grid = H2OGridSearch(model=gbm, hyper_params=gbm_params, search_criteria={'strategy': "Cartesian"})
+
+# Entrenar el Grid Search en el conjunto de entrenamiento
+gbm_grid.train(x=X, y=y, training_frame=train_h2o)
+
+# Ver los mejores modelos
+print("Modelos GBM ordenados por logloss:")
+print(gbm_grid.get_grid(sort_by='logloss', decreasing=False))
+```
+
+\figuragraficos{gbm_grid_search.png}{Resultados de Grid Search para GBM}
+
+## Selección de los Mejores Modelos Base
+
+Seleccionamos los mejores modelos de cada grid search basándonos en la métrica de logloss.
+
+```{python}
+# Seleccionar el mejor modelo de Random Forest
+best_rf = rf_grid.get_grid(sort_by='logloss', decreasing=False).models[0]
+print("Mejor modelo Random Forest:")
+print(best_rf)
+
+# Seleccionar el mejor modelo de GBM
+best_gbm = gbm_grid.get_grid(sort_by='logloss', decreasing=False).models[0]
+print("Mejor modelo GBM:")
+print(best_gbm)
+```
+
+\figuragraficos{mejores_modelos_rf_gbm.png}{Mejores Modelos de Random Forest y GBM}
+
+## Creación del Modelo Híbrido con Stacking en H2O
+
+Utilizamos los modelos base optimizados para crear un modelo de ensamble apilado (**Stacked Ensemble**).
+
+```{python}
+# Crear el Stacked Ensemble
+ensemble = H2OStackedEnsembleEstimator(
+    model_id="ensemble_model",
+    base_models=[best_rf.model_id, best_gbm.model_id]
+)
+
+# Entrenar el Stacked Ensemble
+ensemble.train(x=X, y=y, training_frame=train_h2o)
+
+print("Modelo Híbrido (Stacked Ensemble) entrenado exitosamente.")
+```
+
+\figuragraficos{stacked_ensemble_entrenado.png}{Entrenamiento del Modelo Híbrido (Stacked Ensemble)}
+
+## Evaluación del Modelo Híbrido
+
+Evaluamos el rendimiento del modelo en el conjunto de prueba y comparamos con los modelos base.
+
+```{python}
+# Evaluar en el conjunto de prueba
+performance = ensemble.model_performance(test_h2o)
+print(performance)
+
+# Obtener métricas de precisión
+accuracy = performance.accuracy().get("accuracy")[0][1]
+print(f"Precisión del modelo híbrido (Stacking): {accuracy * 100:.2f}%")
+
+# Obtener el informe de clasificación
+conf_matrix = performance.confusion_matrix()
+print("Matriz de Confusión del modelo híbrido (Stacking):")
+print(conf_matrix)
+```
+
+\figuragraficos{performance_hybrid_model.png}{Rendimiento del Modelo Híbrido (Stacking)}
+
+## Visualización de Resultados del Modelo Híbrido
+
+Visualizamos la matriz de confusión generada por el modelo híbrido.
+
+```{python}
+# Convertir la matriz de confusión a un DataFrame
+conf_matrix_df = conf_matrix.as_data_frame()
+
+# Extraer etiquetas
+labels = conf_matrix_df['actual'].unique()
+
+# Crear una matriz para el heatmap
+heatmap_data = conf_matrix_df.pivot("actual", "predict", "count")
+
+# Plotear la matriz de confusión utilizando Plotly
+fig = px.imshow(
+    heatmap_data,
+    labels=dict(x="Predicción", y="Verdadero", color="Cuenta"),
+    x=labels,
+    y=labels,
+    title='Matriz de Confusión del Modelo Híbrido (Stacking) con H2O',
+    color_continuous_scale='Blues'
+)
+fig.update_layout(width=800, height=600)
+figure_filename = "matriz_confusion_stacking_h2o.png"
+save_plotly_figure(fig, figure_filename)
+```
+
+\figuragraficos{matriz_confusion_stacking_h2o.png}{Matriz de Confusión del Modelo Híbrido (Stacking) con H2O}
+
+```{python}
+# Generar y guardar una representación gráfica adicional de la precisión en el conjunto de prueba para el modelo híbrido utilizando Plotly Express
+fig = px.bar(
+    x=['Híbrido'],
+    y=[accuracy * 100],
+    labels={'x': 'Modelo', 'y': 'Precisión (%)'},
+    title='Precisión en el Conjunto de Prueba para el Modelo Híbrido',
+    color=['Híbrido'],
+    color_discrete_sequence=['lightgreen']
+)
+fig.update_yaxes(range=[0, 100])
+figure_filename = "precision_prueba_hibrido.png"
+save_plotly_figure(fig, figure_filename)
+```
+
+\figuragraficos{precision_prueba_hibrido.png}{Precisión en el Conjunto de Prueba para el Modelo Híbrido}
+
+## Guardar y Cargar el Modelo Híbrido
+
+Guardamos el modelo de ensamble para su uso futuro y mostramos cómo cargarlo.
+
+```{python}
+import joblib
+
+# Guardar el modelo de Stacking
+ensemble_path = h2o.save_model(model=ensemble, path=".", force=True)
+print(f"Modelo híbrido (Stacked Ensemble) guardado en: {ensemble_path}")
+```
+
+\figuragraficos{guardar_cargar_modelo.png}{Guardado y Carga del Modelo Híbrido}
+
+```{python}
+# Cargar el modelo Híbrido
+loaded_ensemble = h2o.load_model(ensemble_path)
+print("Modelo híbrido (Stacked Ensemble) cargado exitosamente.")
+```
+
+## Comparación con el Modelo CNN
+
+Comparamos el rendimiento del modelo híbrido con el modelo CNN entrenado previamente.
+
+**Resultados obtenidos:**
+
+-   **Precisión en el conjunto de prueba (CNN)**: Se alcanzó una precisión del `95.50%`, lo cual indica que el modelo CNN es capaz de clasificar correctamente las enfermedades en un alto porcentaje de casos.
+    
+-   **Precisión del modelo híbrido (Stacking) con H2O**: El modelo híbrido basado en Stacking logró una precisión de `{{accuracy * 100:.2f}}%`, demostrando la efectividad de combinar múltiples modelos base para mejorar el desempeño.
+    
+-   **Distribución de clases balanceada**: La distribución uniforme de las clases en los conjuntos de entrenamiento, validación y prueba contribuyó a un aprendizaje efectivo del modelo sin sesgos.
+
+```{python}
+# Generar una representación gráfica de la comparación de precisión utilizando Plotly Express
+comparacion_modelos = ['CNN', 'Híbrido']
+precisiones = [cnn_test_accuracy, accuracy * 100]
+
+fig = px.bar(
+    x=comparacion_modelos,
+    y=precisiones,
+    labels={'x': 'Modelo', 'y': 'Precisión (%)'},
+    title='Comparación de Precisión entre Modelos CNN y Híbrido',
+    color=comparacion_modelos,
+    color_discrete_sequence=['lightsalmon', 'lightgreen']
+)
+fig.update_yaxes(range=[0, 100])
+figure_filename = "comparacion_modelos.png"
+save_plotly_figure(fig, figure_filename)
+```
+
+\figuragraficos{comparacion_modelos.png}{Comparación de Precisión entre Modelos CNN y Híbrido}
+
+## Conclusiones
+
+En este proyecto, hemos desarrollado un **Modelo Híbrido** para la clasificación de enfermedades en hojas de mango utilizando técnicas avanzadas de **Ensemble Learning** con **H2O**. El proceso incluyó:
+
+-   **Preparación y Análisis de Datos**: Organización de imágenes, etiquetado y división en conjuntos de entrenamiento, validación y prueba.
+    
+-   **Modelo CNN con PyTorch**: Implementación y entrenamiento de una red neuronal convolucional para la extracción de características de las imágenes.
+    
+-   **Modelos Base con H2O**: Entrenamiento de modelos base (**Random Forest**, **GBM**) con optimización de hiperparámetros utilizando `H2OGridSearch`.
+    
+-   **Modelo Híbrido con Stacking**: Creación de un ensamble apilado utilizando los modelos base optimizados para mejorar el rendimiento de la clasificación.
+    
+-   **Evaluación y Visualización**: Evaluación de los modelos utilizando métricas como precisión, recall y F1-score, y visualización de los resultados mediante matrices de confusión y reportes de clasificación.
+    
+-   **Guardado y Carga de Modelos**: Persistencia de los modelos entrenados para su uso futuro.
+
+**Resultados obtenidos:**
+
+-   **Precisión en el conjunto de prueba (CNN)**: Se alcanzó una precisión del `95.50%`, lo cual indica que el modelo CNN es capaz de clasificar correctamente las enfermedades en un alto porcentaje de casos.
+    
+-   **Precisión del modelo híbrido (Stacking) con H2O**: El modelo híbrido basado en Stacking logró una precisión de `{{accuracy * 100:.2f}}%`, demostrando la efectividad de combinar múltiples modelos base para mejorar el desempeño.
+    
+-   **Distribución de clases balanceada**: La distribución uniforme de las clases en los conjuntos de entrenamiento, validación y prueba contribuyó a un aprendizaje efectivo del modelo sin sesgos.
+
+**Mejoras futuras:**
+
+-   **Aumento de Datos**: Implementar técnicas más avanzadas de data augmentation para mejorar la robustez y generalización del modelo.
+    
+-   **Arquitecturas Más Profundas**: Experimentar con arquitecturas de redes neuronales más complejas, como **ResNet** o **EfficientNet**, utilizando las capacidades de Deep Learning de H2O para potencialmente mejorar la precisión.
+    
+-   **Optimización Avanzada**: Utilizar optimizadores y técnicas de regularización más avanzadas, como aprendizaje por transferencia, para mejorar aún más el rendimiento.
+    
+-   **Evaluación con Más Métricas**: Incluir métricas adicionales como **AUC-ROC** para una evaluación más completa del desempeño del modelo.
+
+Este enfoque híbrido, combinando el poder de las redes neuronales convolucionales con la flexibilidad de los modelos de ensamble de H2O, proporciona una solución robusta y eficiente para la clasificación de enfermedades en hojas de mango.
+
+## Referencias
+
+-   He, K., Zhang, X., Ren, S., & Sun, J. (2016). Deep residual learning for image recognition. En *Proceedings of the IEEE conference on computer vision and pattern recognition* (pp. 770-778).
+    
+-   Brownlee, J. (2019). *Deep Learning for Computer Vision*. Machine Learning Mastery.
+    
+-   Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer.

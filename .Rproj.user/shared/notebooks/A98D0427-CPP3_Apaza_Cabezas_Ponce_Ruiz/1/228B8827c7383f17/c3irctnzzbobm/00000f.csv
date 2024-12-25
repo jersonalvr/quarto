@@ -1,0 +1,8 @@
+"0","# Definir las transformaciones para el conjunto de prueba y validación"
+"0","transform_test = transforms.Compose(["
+"0","    transforms.Resize((240, 320)),"
+"0","    transforms.ToTensor(),"
+"0","    transforms.Normalize((0.5, 0.5, 0.5),"
+"0","                         (0.5, 0.5, 0.5))"
+"0","])"
+"0",""

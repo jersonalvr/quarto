@@ -1,0 +1,35 @@
+"0","# Generar rutas de datos con etiquetas"
+"0","path = kagglehub.dataset_download(""aryashah2k/mango-leaf-disease-dataset"")"
+"1","Warning: Looks like you're using an outdated `kagglehub` version, please consider updating (latest version: 0.3.6)
+"
+"0","filepaths = []"
+"0","labels = []"
+"0",""
+"0","folders = os.listdir(path)"
+"0","for folder in folders:"
+"0","    folder_path = os.path.join(path, folder)"
+"0","    if os.path.isdir(folder_path):"
+"0","        filelist = os.listdir(folder_path)"
+"0","        for file in filelist:"
+"0","            fpath = os.path.join(folder_path, file)"
+"0","            if fpath.endswith('.jpg') or fpath.endswith('.jpeg') or fpath.endswith('.png'):"
+"0","                filepaths.append(fpath)"
+"0","                labels.append(folder)"
+"0","                "
+"0","# Concatenar rutas de imagenes con etiquetas en un dataframe"
+"0","Fseries = pd.Series(filepaths, name='filepaths')"
+"0","Lseries = pd.Series(labels, name='labels')"
+"0","df = pd.concat([Fseries, Lseries], axis=1)"
+"0",""
+"0","# Verificar el DataFrame"
+"0","print(df.head())"
+"1","                                           filepaths       labels
+0  C:\Users\Jerson\.cache\kagglehub\datasets\arya...  Anthracnose
+1  C:\Users\Jerson\.cache\kagglehub\datasets\arya...  Anthracnose
+2  C:\Users\Jerson\.cache\kagglehub\datasets\arya...  Anthracnose
+3  C:\Users\Jerson\.cache\kagglehub\datasets\arya...  Anthracnose
+4  C:\Users\Jerson\.cache\kagglehub\datasets\arya...  Anthracnose
+"
+"0","print(f'Tamaño del DataFrame: {df.shape}')"
+"1","Tamaño del DataFrame: (4000, 2)
+"

@@ -1,0 +1,4 @@
+"0","# Definir la Función de Pérdida y el Optimizador"
+"0","criterion = nn.CrossEntropyLoss()"
+"0","optimizer = optim.Adam(model.parameters(), lr=0.001)"
+"0",""

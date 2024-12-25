@@ -1,0 +1,65 @@
+"0","# Contar el número de imágenes por clase"
+"0","class_counts = df['labels'].value_counts().reset_index()"
+"0","class_counts.columns = ['Clase', 'Cantidad']"
+"0",""
+"0","# Visualización interactiva con Plotly"
+"0","fig = px.bar(class_counts, x='Clase', y='Cantidad', title='Distribución de Imágenes por Clase',"
+"0","             labels={'Cantidad': 'Número de Imágenes', 'Clase': 'Clase'},"
+"0","             text='Cantidad')"
+"0","fig.update_traces(textposition='outside')"
+"0","fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')"
+"1","Figure({
+    'data': [{'alignmentgroup': 'True',
+              'hovertemplate': 'Clase=%{x}<br>Número de Imágenes=%{text}<extra></extra>',
+              'legendgroup': '',
+              'marker': {'color': '#636efa', 'pattern': {'shape': ''}},
+              'name': '',
+              'offsetgroup': '',
+              'orientation': 'v',
+              'showlegend': False,
+              'text': array([500., 500., 500., 500., 500., 500., 500., 500.]),
+              'textposition': 'outside',
+       "
+"1","       'type': 'bar',
+              'x': array(['Anthracnose', 'Bacterial Canker', 'Cutting Weevil', 'Die Back',
+                          'Gall Midge', 'Healthy', 'Powdery Mildew', 'Sooty Mould'], dtype=object),
+              'xaxis': 'x',
+              'y': array([500, 500, 500, 500, 500, 500, 500, 500], dtype=int64),
+              'yaxis': 'y'}],
+    'layout': {'barmode': 'relative',
+               'legend': {'tracegroupgap': 0},
+               'template': '...',
+               'title': {'text':"
+"1"," 'Distribución de Imágenes por Clase'},
+               'xaxis': {'anchor': 'y', 'domain': [0.0, 1.0], 'title': {'text': 'Clase'}},
+               'yaxis': {'anchor': 'x', 'domain': [0.0, 1.0], 'title': {'text': 'Número de Imágenes'}}}
+})
+"
+"1","Figure({
+    'data': [{'alignmentgroup': 'True',
+              'hovertemplate': 'Clase=%{x}<br>Número de Imágenes=%{text}<extra></extra>',
+              'legendgroup': '',
+              'marker': {'color': '#636efa', 'pattern': {'shape': ''}},
+              'name': '',
+              'offsetgroup': '',
+              'orientation': 'v',
+              'showlegend': False,
+              'text': array([500., 500., 500., 500., 500., 500., 500., 500.]),
+              'textposition': 'outside',
+       "
+"1","       'type': 'bar',
+              'x': array(['Anthracnose', 'Bacterial Canker', 'Cutting Weevil', 'Die Back',
+                          'Gall Midge', 'Healthy', 'Powdery Mildew', 'Sooty Mould'], dtype=object),
+              'xaxis': 'x',
+              'y': array([500, 500, 500, 500, 500, 500, 500, 500], dtype=int64),
+              'yaxis': 'y'}],
+    'layout': {'barmode': 'relative',
+               'legend': {'tracegroupgap': 0},
+               'template': '...',
+               'title': {'text':"
+"1"," 'Distribución de Imágenes por Clase'},
+               'uniformtext': {'minsize': 8, 'mode': 'hide'},
+               'xaxis': {'anchor': 'y', 'domain': [0.0, 1.0], 'title': {'text': 'Clase'}},
+               'yaxis': {'anchor': 'x', 'domain': [0.0, 1.0], 'title': {'text': 'Número de Imágenes'}}}
+})
+"

@@ -1,0 +1,15 @@
+"0","# Primero, dividir en entrenamiento (70%) y prueba+validación (30%)"
+"0","train_df, temp_df = train_test_split(df, test_size=0.3, stratify=df['labels'], random_state=42)"
+"0",""
+"0","# Luego, dividir el conjunto temporal en validación (15%) y prueba (15%)"
+"0","val_df, test_df = train_test_split(temp_df, test_size=0.5, stratify=temp_df['labels'], random_state=42)"
+"0",""
+"0","print(f'Tamaño del conjunto de entrenamiento: {train_df.shape}')"
+"0","print(f'Tamaño del conjunto de validación: {val_df.shape}')"
+"1","Tamaño del conjunto de entrenamiento: (2800, 2)
+"
+"1","Tamaño del conjunto de validación: (600, 2)
+"
+"0","print(f'Tamaño del conjunto de prueba: {test_df.shape}')"
+"1","Tamaño del conjunto de prueba: (600, 2)
+"

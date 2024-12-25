@@ -1,0 +1,14 @@
+"0","# Definir el dispositivo"
+"0","device = torch.device(""cuda:0"" if torch.cuda.is_available() else ""cpu"")"
+"0","print(f""Usando dispositivo: {device}"")"
+"1","Usando dispositivo: cuda:0
+"
+"0","# Verificar qué GPU se está utilizando"
+"0","if device.type == 'cuda':"
+"0","    print(f""Nombre de la GPU: {torch.cuda.get_device_name(0)}"")"
+"0","    print(f""Memoria total de la GPU: {torch.cuda.get_device_properties(0).total_memory / 1e9} GB"")"
+"0","    torch.cuda.set_device(0)"
+"0",""
+"1","Nombre de la GPU: NVIDIA GeForce RTX 4060 Laptop GPU
+Memoria total de la GPU: 8.585216 GB
+"
