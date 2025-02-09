@@ -86,7 +86,7 @@ format:
 # Verificando Hadoop
 ```{python, cache=true}
 !hadoop version
-# start-all.sh desde su hadoop
+# start-all.sh desde usuario hadoop
 # jps
 ```
 
@@ -97,7 +97,7 @@ format:
 # Verificando Spark
 ```{python, cache=true}
 !spark-shell --version
-# start-master.sh desde su hadoop
+# start-master.sh desde usuario hadoop
 # jps | grep Master
 ```
 
@@ -105,39 +105,201 @@ format:
 
 # Subiendo sales_data.csv a hdfs
 
-
-# Probando entorno
 ```{python, cache=true}
-try:
-    # Importar SparkSession
-    from pyspark.sql import SparkSession
-    
-    # Crear una sesión de Spark
-    spark = SparkSession.builder \
-        .appName("PruebaPySpark") \
-        .getOrCreate()
-    
-    # Verificar si la sesión está activa
-    print(f"Versión de Spark: {spark.version}")
-    print("Sesión de Spark creada con éxito.")
-    
-    # Crear un DataFrame simple
-    datos = [("Juan", 25), ("Ana", 30), ("Pedro", 35)]
-    columnas = ["Nombre", "Edad"]
-    df = spark.createDataFrame(datos, columnas)
-    
-    # Mostrar el DataFrame
-    print("Mostrando datos del DataFrame:")
-    df.show()
-    
-    # Contar el número de filas
-    print(f"Número de filas en el DataFrame: {df.count()}")
-    
-    # Detener la sesión de Spark
-    spark.stop()
-    print("Sesión de Spark detenida.")
-
-except Exception as e:
-    print(f"Error al ejecutar el código con PySpark: {e}")
+# En el usuario hadoop
+# sudo cp /home/jerson/Documentos/quarto/sales_data.csv /home/hadoop/hadoopdata/
+# hdfs dfs -mkdir /sales
+# hdfs dfs -put /home/hadoop/hadoopdata/sales_data.csv /sales
+!hadoop fs -ls /sales
 ```
 
+# Iniciando la sesion de Spark
+```{python, cache=true}
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import sum as spark_sum
+
+def create_spark_session():
+    """
+    Crea una sesión de Spark configurada para trabajar con HDFS
+    """
+    spark = SparkSession.builder \
+        .appName("HDFSProcessing") \
+        .config("spark.driver.host", "192.168.18.80") \
+        .config("spark.driver.bindAddress", "192.168.18.80") \
+        .config("spark.hadoop.fs.defaultFS", "hdfs://localhost:9000") \
+        .config("spark.executor.memory", "2g") \
+        .config("spark.driver.memory", "2g") \
+        .getOrCreate()
+    
+    spark.sparkContext.setLogLevel("ERROR")
+    return spark
+
+def read_and_process_sales():
+    try:
+        # Crear sesión Spark
+        spark = create_spark_session()
+        
+        # Ruta del archivo en HDFS
+        hdfs_path = "hdfs:///sales/sales_data.csv"
+        
+        # Leer el archivo CSV desde HDFS
+        df = spark.read.option("header", "true") \
+                      .option("inferSchema", "true") \
+                      .csv(hdfs_path)
+        
+        # Realizar el análisis
+        sales_by_region = df.groupBy("Region") \
+                           .agg(spark_sum("Sales").alias("TotalSales")) \
+                           .orderBy("Region")
+        
+        # Mostrar resultados
+        print("Ventas por región:")
+        sales_by_region.show()
+        
+        return sales_by_region
+        
+    except Exception as e:
+        print(f"Error en el procesamiento: {str(e)}")
+        raise
+    finally:
+        spark.stop()
+
+if __name__ == "__main__":
+    read_and_process_sales()
+```
+
+# Configurar un esquema NoSQL
+
+
+```{python, cache=true}
+from pyspark.sql import SparkSession
+from pymongo import MongoClient
+from datetime import datetime
+import pandas as pd
+
+def create_spark_session():
+    """Crear sesión Spark para leer datos"""
+    return SparkSession.builder \
+        .appName("SalesETL") \
+        .config("spark.driver.host", "192.168.18.80") \
+        .config("spark.driver.bindAddress", "192.168.18.80") \
+        .config("spark.hadoop.fs.defaultFS", "hdfs://localhost:9000") \
+        .getOrCreate()
+
+def date_to_datetime(date_obj):
+    """Convierte un objeto date a datetime"""
+    if isinstance(date_obj, datetime):
+        return date_obj
+    return datetime.combine(date_obj, datetime.min.time())
+
+def process_and_load_to_mongo():
+    # Configuración MongoDB
+    client = MongoClient('mongodb://localhost:27017/')
+    db = client['sales_db']
+    
+    # Limpiar colecciones existentes
+    db.sales.drop()
+    db.region_stats.drop()
+    db.product_stats.drop()
+    
+    # Crear colecciones con índices optimizados
+    sales_collection = db['sales']
+    region_stats = db['region_stats']
+    product_stats = db['product_stats']
+    
+    # Crear índices para búsquedas rápidas
+    sales_collection.create_index([("region", 1)])
+    sales_collection.create_index([("product", 1)])
+    sales_collection.create_index([("date", 1)])
+    
+    try:
+        # Leer datos con Spark
+        spark = create_spark_session()
+        df = spark.read.csv("hdfs:///sales/sales_data.csv", header=True, inferSchema=True)
+        
+        # Convertir a pandas para procesamiento
+        pandas_df = df.toPandas()
+        
+        # Procesar y cargar ventas individuales
+        for _, row in pandas_df.iterrows():
+            # Convertir la fecha a datetime
+            date_obj = date_to_datetime(row['Date'])
+            
+            sale_doc = {
+                "region": row['Region'],
+                "product": row['Product'],
+                "date": date_obj,
+                "sales": float(row['Sales']),
+                "year_month": date_obj.strftime('%Y-%m')
+            }
+            sales_collection.insert_one(sale_doc)
+        
+        # Agregaciones por región
+        pipeline_region = [
+            {"$group": {
+                "_id": "$region",
+                "total_sales": {"$sum": "$sales"},
+                "avg_sales": {"$avg": "$sales"},
+                "sales_count": {"$sum": 1},
+                "products": {"$addToSet": "$product"}
+            }}
+        ]
+        region_results = list(sales_collection.aggregate(pipeline_region))
+        region_stats.insert_many(region_results)
+        
+        # Agregaciones por producto
+        pipeline_product = [
+            {"$group": {
+                "_id": "$product",
+                "total_sales": {"$sum": "$sales"},
+                "regions_sold": {"$addToSet": "$region"},
+                "first_sale": {"$min": "$date"},
+                "last_sale": {"$max": "$date"}
+            }}
+        ]
+        product_results = list(sales_collection.aggregate(pipeline_product))
+        product_stats.insert_many(product_results)
+        
+        return client
+        
+    except Exception as e:
+        print(f"Error específico durante el procesamiento: {type(e).__name__} - {str(e)}")
+        raise
+
+def print_collection_contents(client):
+    """Función para verificar los datos cargados"""
+    db = client['sales_db']
+    
+    print("\nContenido de la colección 'sales':")
+    for doc in db.sales.find().limit(3):
+        print(doc)
+    
+    print("\nEstadísticas por región:")
+    for doc in db.region_stats.find():
+        print(doc)
+    
+    print("\nEstadísticas por producto:")
+    for doc in db.product_stats.find():
+        print(doc)
+
+def verify_data_types(client):
+    """Verificar los tipos de datos en la colección"""
+    db = client['sales_db']
+    first_doc = db.sales.find_one()
+    if first_doc:
+        print("\nTipos de datos en el primer documento:")
+        for key, value in first_doc.items():
+            print(f"{key}: {type(value)}")
+
+if __name__ == "__main__":
+    try:
+        client = process_and_load_to_mongo()
+        print("Datos cargados exitosamente")
+        print_collection_contents(client)
+        verify_data_types(client)
+    except Exception as e:
+        print(f"Error durante el procesamiento: {str(e)}")
+    finally:
+        if 'client' in locals():
+            client.close()
+```
