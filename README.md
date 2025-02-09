@@ -1,18 +1,83 @@
 ## Primeros pasos
 
-* [Tutorial para instalar Hadoop](https://medium.com/@charan.n_22122016/installing-hadoop-on-ubuntu-a-step-by-step-guide-a2f43dfdc4ac)
-
-   ```bash
-   # Contenido para /etc/profile.d/hadoop.sh
-   export HADOOP_HOME=/home/hadoop/hadoop
-   export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+### [Tutorial para instalar Hadoop 3.4.1](https://medium.com/@charan.n_22122016/installing-hadoop-on-ubuntu-a-step-by-step-guide-a2f43dfdc4ac)
 
    # Dar permisos de administrador al usuario
+   ```bash
+   sudo usermod -aG hadoop tu_usuario
    sudo usermod -aG sudo hadoop
    sudo chmod -R 755 /home/hadoop/hadoop
+   start-all.sh # Detener stop-all.sh
+   ```
+   
+   # Namenode
+   http://localhost:9870/
+
+   # Cluster
+   http://localhost:8088/
+
+   # Datanode
+   http://localhost:9864
    ```
 
-* [Instalar Quarto](https://quarto.org/docs/get-started/) y la extension de Quarto en VSCode
+### Instalar Spark y configurar la variable de entorno SPARK_HOME.
+
+1. Primero, descarga y descomprime Spark:
+
+   ```bash
+   # Descargar Spark
+   wget https://dlcdn.apache.org/spark/spark-3.5.4/spark-3.5.4-bin-hadoop3.tgz
+
+   # Descomprimir el archivo
+   tar -xzf spark-3.5.4-bin-hadoop3.tgz
+
+   # Mover a opt
+   sudo mv spark-3.5.4-bin-hadoop3 /opt/spark
+   ```
+
+2. Configura las variables de entorno. Puedes añadirlas al archivo `.bashrc`:
+
+   ```bash
+   # Abre el archivo .bashrc
+   nano ~/.bashrc
+
+   # Añade estas líneas al final del archivo
+   export SPARK_HOME=/opt/spark
+   export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+   # Opcionalmente verificar su ip con ifconfig
+   export SPARK_LOCAL_IP=192.168.18.80
+   ```
+
+   ```bash
+   export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+   export HADOOP_HOME=/home/hadoop/hadoop
+   export HADOOP_INSTALL=$HADOOP_HOME
+   export HADOOP_MAPRED_HOME=$HADOOP_HOME
+   export HADOOP_COMMON_HOME=$HADOOP_HOME
+   export HADOOP_HDFS_HOME=$HADOOP_HOME
+   export HADOOP_YARN_HOME=$HADOOP_HOME
+   export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+   export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
+   export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
+   export SPARK_HOME=/opt/spark
+   export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+   export SPARK_LOCAL_IP=192.168.18.80
+   ```
+
+3. Aplica los cambios:
+
+   ```bash
+   source ~/.bashrc
+   ```
+
+4. Verifica la instalación:
+
+   ```bash
+   echo $SPARK_HOME
+   spark-shell --version
+   ```
+
+### Instalar [Quarto](https://quarto.org/docs/get-started/) tambien la extension de Quarto y Jupyter en VSCode
 
    ```bash
    # Instalar latex
@@ -27,7 +92,7 @@ git checkout Y1018-Y04AN1-2025-2-Big_Data_Aplicada
 ```
 
 ## Creación del entorno
-* Instalar previamente entornos virtuales `sudo apt install python3-venv python3-full` y extension de Python
+* Instalar previamente entornos virtuales `sudo apt install python3-venv python3-full` y extension de Python en VSCode
 
    ```bash
    source spark_env/bin/activate

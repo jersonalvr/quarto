@@ -82,3 +82,49 @@ format:
 ---
 
 \newpage
+
+# Verificando Hadoop
+```{python, cache=true}
+!hadoop version
+```
+
+# Verificando Spark
+```{python, cache=true}
+!spark-shell --version
+!start-master.sh
+```
+
+```{python, cache=true}
+try:
+    # Importar SparkSession
+    from pyspark.sql import SparkSession
+    
+    # Crear una sesión de Spark
+    spark = SparkSession.builder \
+        .appName("PruebaPySpark") \
+        .getOrCreate()
+    
+    # Verificar si la sesión está activa
+    print(f"Versión de Spark: {spark.version}")
+    print("Sesión de Spark creada con éxito.")
+    
+    # Crear un DataFrame simple
+    datos = [("Juan", 25), ("Ana", 30), ("Pedro", 35)]
+    columnas = ["Nombre", "Edad"]
+    df = spark.createDataFrame(datos, columnas)
+    
+    # Mostrar el DataFrame
+    print("Mostrando datos del DataFrame:")
+    df.show()
+    
+    # Contar el número de filas
+    print(f"Número de filas en el DataFrame: {df.count()}")
+    
+    # Detener la sesión de Spark
+    spark.stop()
+    print("Sesión de Spark detenida.")
+
+except Exception as e:
+    print(f"Error al ejecutar el código con PySpark: {e}")
+```
+
