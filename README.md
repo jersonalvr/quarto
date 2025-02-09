@@ -2,7 +2,7 @@
 
 ### [Tutorial para instalar Hadoop 3.4.1](https://medium.com/@charan.n_22122016/installing-hadoop-on-ubuntu-a-step-by-step-guide-a2f43dfdc4ac)
 
-   # Dar permisos de administrador al usuario
+   ### Dar permisos de administrador al usuario hadoop
    ```bash
    sudo usermod -aG hadoop tu_usuario
    sudo usermod -aG sudo hadoop
@@ -10,6 +10,43 @@
    start-all.sh # Detener stop-all.sh
    ```
    
+   ### Si quieres iniciar Hadoop como tu usuario:
+
+   1. Error de SSH:
+      ```
+      Permission denied (publickey,password)
+      ```
+   Este error aparece porque Hadoop necesita acceso SSH sin contraseña al localhost.
+
+   2. Error de permisos de escritura:
+      ```
+      ERROR: Unable to write in /home/hadoop/hadoop/logs
+      ```
+   No tienes permisos de escritura en el directorio de logs.
+
+   3. Cuando cambias al usuario "hadoop" (`su hadoop`), todo funciona correctamente.
+
+   Para solucionar esto, tienes varias opciones:
+
+   1. **Configurar tu usuario adecuadamente** (si necesitas usar este usuario):
+      - Configurar SSH sin contraseña:
+      ```bash
+      ssh-keygen -t rsa -P ''
+      cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+      chmod 0600 ~/.ssh/authorized_keys
+      ```
+      
+      - Asegurarte que tienes los permisos necesarios:
+      ```bash
+      sudo usermod -aG hadoop jerson
+      sudo chown -R hadoop:hadoop /home/hadoop/hadoop
+      sudo chmod g+w -R /home/hadoop/hadoop
+      ```
+
+   2. **Modificar la configuración de Hadoop**:
+      - Editar `etc/hadoop/hadoop-env.sh` para especificar el usuario correcto
+      - Asegurarte que los directorios de logs tienen los permisos adecuados
+
    # Namenode
    http://localhost:9870/
 
