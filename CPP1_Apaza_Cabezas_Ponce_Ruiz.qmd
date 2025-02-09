@@ -86,14 +86,27 @@ format:
 # Verificando Hadoop
 ```{python, cache=true}
 !hadoop version
+# start-all.sh desde su hadoop
+# jps
 ```
+
+\figuragraficos{namenode.png}{Namenode http://localhost:9870/}
+\figuragraficos{cluster.png}{Cluster http://localhost:8088/}
+\figuragraficos{datanode.png}{Datanode http://localhost:9864}
 
 # Verificando Spark
 ```{python, cache=true}
 !spark-shell --version
-!start-master.sh
+# start-master.sh desde su hadoop
+# jps | grep Master
 ```
 
+\figuragraficos{sparkmaster.png}{Spark Master at spark://ubuntu:7077}
+
+# Subiendo sales_data.csv a hdfs
+
+
+# Probando entorno
 ```{python, cache=true}
 try:
     # Importar SparkSession

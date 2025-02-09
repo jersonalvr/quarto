@@ -9,53 +9,14 @@
    sudo chmod -R 755 /home/hadoop/hadoop
    start-all.sh # Detener stop-all.sh
    ```
-   
-   ### Si quieres iniciar Hadoop como tu usuario:
+   * #### Namenode
+      http://localhost:9870/
 
-   1. Error de SSH:
-      ```
-      Permission denied (publickey,password)
-      ```
-   Este error aparece porque Hadoop necesita acceso SSH sin contraseña al localhost.
+   * #### Cluster
+      http://localhost:8088/
 
-   2. Error de permisos de escritura:
-      ```
-      ERROR: Unable to write in /home/hadoop/hadoop/logs
-      ```
-   No tienes permisos de escritura en el directorio de logs.
-
-   3. Cuando cambias al usuario "hadoop" (`su hadoop`), todo funciona correctamente.
-
-   Para solucionar esto, tienes varias opciones:
-
-   1. **Configurar tu usuario adecuadamente** (si necesitas usar este usuario):
-      - Configurar SSH sin contraseña:
-      ```bash
-      ssh-keygen -t rsa -P ''
-      cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-      chmod 0600 ~/.ssh/authorized_keys
-      ```
-      
-      - Asegurarte que tienes los permisos necesarios:
-      ```bash
-      sudo usermod -aG hadoop jerson
-      sudo chown -R hadoop:hadoop /home/hadoop/hadoop
-      sudo chmod g+w -R /home/hadoop/hadoop
-      ```
-
-   2. **Modificar la configuración de Hadoop**:
-      - Editar `etc/hadoop/hadoop-env.sh` para especificar el usuario correcto
-      - Asegurarte que los directorios de logs tienen los permisos adecuados
-
-   # Namenode
-   http://localhost:9870/
-
-   # Cluster
-   http://localhost:8088/
-
-   # Datanode
-   http://localhost:9864
-   ```
+   * #### Datanode
+      http://localhost:9864
 
 ### Instalar Spark y configurar la variable de entorno SPARK_HOME.
 
@@ -68,8 +29,10 @@
    # Descomprimir el archivo
    tar -xzf spark-3.5.4-bin-hadoop3.tgz
 
-   # Mover a opt
+   # Mover a opt y dar permisos
    sudo mv spark-3.5.4-bin-hadoop3 /opt/spark
+   sudo chmod -R 755 /opt/spark
+   sudo chown -R hadoop:hadoop /opt/spark
    ```
 
 2. Configura las variables de entorno. Puedes añadirlas al archivo `.bashrc`:
@@ -112,6 +75,9 @@
    ```bash
    echo $SPARK_HOME
    spark-shell --version
+   start-master.sh 
+   jps | grep Master
+   http://192.168.18.80:8080/
    ```
 
 ### Instalar [Quarto](https://quarto.org/docs/get-started/) tambien la extension de Quarto y Jupyter en VSCode
