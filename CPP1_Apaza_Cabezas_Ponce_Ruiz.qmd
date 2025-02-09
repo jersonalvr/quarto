@@ -303,3 +303,159 @@ if __name__ == "__main__":
         if 'client' in locals():
             client.close()
 ```
+
+# Benchmark MongoDB
+
+```{python, cache=true}
+from pyspark.sql import SparkSession
+from pymongo import MongoClient
+from datetime import datetime, timedelta
+import pandas as pd
+import time
+import statistics
+import json
+from tabulate import tabulate
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+class MongoBenchmark:
+    def __init__(self, client):
+        self.db = client['sales_db']
+        self.results = []
+        
+    def time_operation(self, operation_name, operation, iterations=100):
+        """Mide el tiempo de una operación específica"""
+        times = []
+        for _ in range(iterations):
+            start_time = time.perf_counter()
+            operation()
+            end_time = time.perf_counter()
+            times.append(end_time - start_time)
+        
+        metrics = {
+            'operation': operation_name,
+            'avg_time': statistics.mean(times),
+            'min_time': min(times),
+            'max_time': max(times),
+            'median_time': statistics.median(times),
+            'std_dev': statistics.stdev(times) if len(times) > 1 else 0
+        }
+        self.results.append(metrics)
+        return metrics
+
+    def run_benchmarks(self):
+        """Ejecuta todos los benchmarks"""
+        print("Iniciando benchmarks...")
+        
+        # Benchmark 1: Búsqueda simple por región
+        self.time_operation(
+            "Búsqueda por región",
+            lambda: list(self.db.sales.find({"region": "North"}).limit(10))
+        )
+        
+        # Benchmark 2: Agregación de ventas por región
+        self.time_operation(
+            "Agregación por región",
+            lambda: list(self.db.sales.aggregate([
+                {"$group": {
+                    "_id": "$region",
+                    "total_sales": {"$sum": "$sales"}
+                }}
+            ]))
+        )
+        
+        # Benchmark 3: Búsqueda con filtro de fecha
+        self.time_operation(
+            "Búsqueda por fecha",
+            lambda: list(self.db.sales.find({
+                "date": {
+                    "$gte": datetime(2025, 1, 1),
+                    "$lt": datetime(2025, 2, 1)
+                }
+            }))
+        )
+        
+        # Benchmark 4: Búsqueda compuesta
+        self.time_operation(
+            "Búsqueda compuesta",
+            lambda: list(self.db.sales.find({
+                "region": "North",
+                "sales": {"$gt": 1000}
+            }))
+        )
+        
+        # Benchmark 5: Agregación compleja
+        self.time_operation(
+            "Agregación compleja",
+            lambda: list(self.db.sales.aggregate([
+                {"$group": {
+                    "_id": {
+                        "region": "$region",
+                        "product": "$product"
+                    },
+                    "total_sales": {"$sum": "$sales"},
+                    "count": {"$sum": 1}
+                }},
+                {"$sort": {"total_sales": -1}},
+                {"$limit": 5}
+            ]))
+        )
+
+    def generate_report(self):
+        """Genera un reporte detallado de los benchmarks"""
+        print("\nReporte de Benchmark:")
+        
+        # Crear tabla con resultados
+        headers = ['Operación', 'Tiempo Promedio (s)', 'Tiempo Min (s)', 
+                  'Tiempo Max (s)', 'Mediana (s)', 'Desv. Estándar']
+        table_data = [[
+            r['operation'],
+            f"{r['avg_time']:.6f}",
+            f"{r['min_time']:.6f}",
+            f"{r['max_time']:.6f}",
+            f"{r['median_time']:.6f}",
+            f"{r['std_dev']:.6f}"
+        ] for r in self.results]
+        
+        print(tabulate(table_data, headers=headers, tablefmt='grid'))
+        
+        # Generar gráfico de barras
+        operations = [r['operation'] for r in self.results]
+        avg_times = [r['avg_time'] for r in self.results]
+        
+        plt.figure(figsize=(12, 6))
+        sns.barplot(x=operations, y=avg_times)
+        plt.xticks(rotation=45, ha='right')
+        plt.xlabel('Operación')
+        plt.ylabel('Tiempo Promedio (segundos)')
+        plt.title('Rendimiento de Operaciones MongoDB')
+        plt.tight_layout()
+        plt.savefig('mongodb_benchmark.png')
+        
+        # Guardar resultados en JSON
+        with open('benchmark_results.json', 'w') as f:
+            json.dump(self.results, f, indent=2)
+
+def run_complete_benchmark():
+    """Ejecuta el benchmark completo"""
+    try:
+        client = MongoClient('mongodb://localhost:27017/')
+        benchmark = MongoBenchmark(client)
+        
+        print("Iniciando suite de benchmarks...")
+        start_time = time.time()
+        
+        benchmark.run_benchmarks()
+        benchmark.generate_report()
+        
+        total_time = time.time() - start_time
+        print(f"\nTiempo total de ejecución: {total_time:.2f} segundos")
+        
+    except Exception as e:
+        print(f"Error durante el benchmark: {str(e)}")
+    finally:
+        client.close()
+
+if __name__ == "__main__":
+    run_complete_benchmark()
+```
