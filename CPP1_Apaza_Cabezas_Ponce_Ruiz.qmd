@@ -24,6 +24,10 @@ format:
       - before-body.tex
     include-in-header: 
       text: |
+        \usepackage{fontspec}
+        \newfontfamily\centurygothic{Century Gothic}
+        \newcommand{\footerfont}{\fontsize{9}{11}\selectfont\centurygothic}
+        
         \usepackage{graphicx}
         \usepackage{float}
         \usepackage{geometry}
@@ -48,29 +52,45 @@ format:
           headsep=0.2cm
         }
         
-        % Configuración encabezado y pie
-        \pagestyle{fancy}
-        \fancyhf{}
-        \renewcommand{\footrulewidth}{0pt}
-        \fancyfoot[R]{\footnotesize{icontinental.edu.pe}}
-        
-        % Encabezado con imagen
-        \fancyhead[C]{%
-          \makebox[\textwidth][c]{%
-            \includegraphics[width=\paperwidth]{encabezado.png}%
-          }%
+        %-----------------------------------------------------------------
+        % Definición del estilo de página para las páginas iniciales (antes del índice)
+        \fancypagestyle{pretoc}{
+          \fancyhf{}
+          \fancyfoot[R]{\footerfont \textbf{icontinental}.edu.pe}
+          \fancyhead[C]{%
+            \makebox[\textwidth][c]{%
+              \includegraphics[width=\paperwidth]{encabezado.png}%
+            }%
+          }
+          \renewcommand{\headrulewidth}{0pt}
+          \renewcommand{\footrulewidth}{0pt}
         }
         
-        \renewcommand{\headrulewidth}{0pt}
+        % Definición del estilo de página para las páginas posteriores al índice
+        \fancypagestyle{posttoc}{
+          \fancyhf{}
+          \fancyhead[C]{%
+            \makebox[\textwidth][c]{%
+              \includegraphics[width=\paperwidth]{encabezado.png}%
+            }%
+          }
+          \fancyfoot[L]{\footerfont Oficina de Gestión de la Calidad}
+          \fancyfoot[R]{\footerfont \textbf{icontinental}.edu.pe \,|\, \thepage}
+          \renewcommand{\headrulewidth}{0pt}
+          \renewcommand{\footrulewidth}{0pt}
+        }
         
-        % Formato secciones
+        % Inicialmente se usa el estilo de página "pretoc"
+        \pagestyle{pretoc}
+        
+        % Formato de secciones
         \titleformat{\section}
           {\normalfont\Large\bfseries}{\thesection}{1em}{}
           
-        % Contador figuras
+        % Contador para figuras
         \newcounter{grafico}
         
-        % Comando figuras
+        % Comando para insertar figuras
         \newcommand{\figuragraficos}[2]{
           \stepcounter{grafico}
           \begin{figure}[H]
@@ -80,10 +100,12 @@ format:
           \end{figure}
         }
 ---
-
 \newpage
+\clearpage
+\pagestyle{posttoc}
 
 # Verificando Hadoop
+
 ```{python, cache=true}
 !hadoop version
 # start-all.sh desde usuario hadoop
@@ -176,6 +198,8 @@ from pyspark.sql import SparkSession
 from pymongo import MongoClient
 from datetime import datetime
 import pandas as pd
+
+# !sudo systemctl start mongod desde usuario hadoop
 
 def create_spark_session():
     """Crear sesión Spark para leer datos"""

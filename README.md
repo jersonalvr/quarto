@@ -89,9 +89,8 @@
 
 ## Clona el repositorio
 ```bash
-gh repo clone jersonalvr/quarto
+gh repo clone jersonalvr/quarto -- -b Y1018-Y04AN1-2025-2-Big_Data_Aplicada
 cd quarto
-git checkout Y1018-Y04AN1-2025-2-Big_Data_Aplicada
 ```
 
 ## Creación del entorno
@@ -107,3 +106,37 @@ git checkout Y1018-Y04AN1-2025-2-Big_Data_Aplicada
    - Seleccionar el kernel "spark_env"
 
 
+## Instalar MongoDB
+
+### Instalación Directa del Paquete .deb
+
+1. **Descarga el paquete .deb:**
+   Abre tu terminal y ejecuta el siguiente comando para descargar el paquete:
+   ```bash
+   wget https://repo.mongodb.org/apt/ubuntu/dists/noble/mongodb-org/8.0/multiverse/binary-amd64/mongodb-org-server_8.0.4_amd64.deb
+   ```
+
+2. **Instala el paquete .deb:**
+   Ejecuta el siguiente comando para instalar el paquete descargado:
+   ```bash
+   sudo dpkg -i mongodb-org-server_8.0.4_amd64.deb
+   ```
+
+3. **Resolución de Dependencias:**
+   Si aparecen errores relacionados con dependencias faltantes, resuélvelos ejecutando:
+   ```bash
+   sudo apt-get install -f
+   ```
+
+4. **Verificar la Instalación:**
+   Comprueba que MongoDB se ha instalado correctamente ejecutando:
+   ```bash
+   mongod --version
+   ```
+
+5. **Iniciar y Verificar el Servicio:**
+   Inicia el servicio de MongoDB y verifica su estado:
+   ```bash
+   sudo systemctl start mongod
+   sudo systemctl status mongod
+   ```
