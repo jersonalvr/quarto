@@ -1,0 +1,61 @@
+% Paquetes gráficos y de formato
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{appendix}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{fvextra}
+
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+\RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+  showspaces = false,
+  showtabs = false,
+  breaksymbolleft={},
+  breaklines
+  % Note: setting commandchars=\\\{\} here will cause an error 
+  }
+
+% Hipervínculos con soporte Unicode
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=black,
+    citecolor=black,
+    filecolor=black,
+    menucolor=black,
+    unicode=true
+}
+
+% Estilo personalizado del pie de página
+\newcommand{\footerfont}{\fontsize{9}{11}\selectfont\setmainfont{Century Gothic}}
+
+\fancypagestyle{pretoc}{
+  \fancyhf{}
+  \fancyhead[C]{%
+    \makebox[\textwidth][c]{%
+      \includegraphics[width=\paperwidth]{assets/portada_encabezado.png}%
+    }%
+  }
+  \renewcommand{\headrulewidth}{0pt}
+  \fancyfoot[R]{\footerfont \href{https://www.icontinental.edu.pe}{\textcolor{black}{\textbf{icontinental.edu.pe}}}}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+\fancypagestyle{toc}{
+  \fancyhf{}
+  \fancyhead[C]{%
+    \makebox[\textwidth][c]{%
+      \includegraphics[width=\paperwidth]{assets/encabezado.png}%
+    }%
+  }
+  \renewcommand{\headrulewidth}{0pt}
+
+  % Configuración del footer para el TOC con numeración romana
+  \fancyfoot[L]{\footerfont Oficina de Gestión de la Calidad}
+  \fancyfoot[R]{\footerfont \href{https://www.icontinental.edu.pe}{\textcolor{black}{\textbf{icontinental}.edu.pe}} \,|\, \roman{page}}
+  \renewcommand{\footrulewidth}{0pt}
+}

@@ -1,0 +1,46 @@
+CAMPO,DESCRIPCIÓN
+FLG_CLI_DEF60,Default
+DIF_BU_MA_100_12M,DIFERENCIA ENTRE MESES DE BUEN Y MAL COMPORTAMIENTO CON MATERIALIDAD>100||Diferencia entre meses de buen comportamiento(calificación=0) y mal comportamiento(calificacióm>0) en los últimos 12 meses (umbral materialidad=100)
+DIF_BU_MA_100_24M,DIFERENCIA ENTRE MESES DE BUEN Y MAL COMPORTAMIENTO CON MATERIALIDAD>100||Diferencia entre meses de buen comportamiento(calificación=0) y mal comportamiento(calificacióm>0) en los últimos 24 meses (umbral materialidad=100)
+DIF_BU_MA_12M,DIFERENCIA ENTRE MESES DE BUEN Y MAL COMPORTAMIENTO CON MATERIALIDAD>0||Diferencia entre meses de buen comportamiento(calificación=0) y mal comportamiento(calificacióm>0) en los últimos 12 meses (umbral materialidad=0)
+DIF_BU_MA_500_12M,DIFERENCIA ENTRE MESES DE BUEN Y MAL COMPORTAMIENTO CON MATERIALIDAD>500||Diferencia entre meses de buen comportamiento(calificación=0) y mal comportamiento(calificacióm>0) en los últimos 12 meses (umbral materialidad=500)
+DIF_BU_MA_ALI_12M,DIFERENCIA ENTRE MESES DE BUEN Y MAL COMPORTAMIENTO ALINEADO CON MATERIALIDAD>0||Diferencia entre meses de buen comportamiento alineado(calificación alineada=0) y mal comportamiento(calificación alienada>0) en los últimos 12 meses (umbral materialidad=0)
+FLG_DVNCD_24M,FLAG DEUDA VENCIDA||Indica la existencia de deuda vencida en los últimos 24 meses
+INC_MAX_DTOTSH_ACTU_24M,INCREMENTO DE DEUDA TOTAL S/HIP. (CONSIDERANDO MÁXIMO)||Máxima deuda total s/hip. en los últimos 24 meses respecto a la deuda total s/hip. actual
+INC_MAX_ENT_ACTU_24M,INCREMENTO DE ENTIDADES ACREEDORAS (CONSIDERANDO MÁXIMO)||Máximo nro. de entidades en los últimos 24 meses respecto al nro. de entidades actual
+INC_SUM_ACTSH_ACTU_24M,INCREMENTO DE DEUDA ACTIVA S/HIP. (CONSIDERANDO SUMA)||Total deuda activa s/hip. en los últimos 24 meses respecto a la deuda activa s/hip. actual
+MAX_ATR_24M,ATRASO MÁXIMO||Nro. máximo de dias de atraso en los último 24 meses
+MAX_ATR_I_12M,MAX_ATR||Máximo atrasos en los últimos 12 meses
+MAX_ATR_I_18M,MAX_ATR||Máximo atrasos en los últimos 18 meses
+MAX_ATR_I_U6K_24M,MAX_ATR||Máximo atrasos en los últimos 6 meses de comportamiento en los últimos 24 meses
+MAX_DEUNOREV_12M,MÁXIMA DEUDA NO REVOLVENTE||Máxima deuda asociada al concepto 'Préstamo no revolvente' en los últimos 12 meses
+MAX_DEU_JUD_24M,MÁXIMA DEUDA JUDICIAL||Máxima deuda judicial en los últimos 24 meses
+MAX_ENT_12M,MÁXIMA CANTIDAD DE ENTIDADES ACREEDORAS||Nro. máximo de entidades acreedoras en los últimos 12 meses
+NMES_ATR15_I_U6K_24M,N_MESES_ATR||Número de meses con atrasos mayores iguales a 15 en los últimos 6 meses de comportamiento en los últimos 24 meses
+NMES_UATR15_I_U6K_24M,"N_MESES_UATR||Número de meses desde el último atraso mayor o igual a 15 días, en los últimos 6 meses de comportamiento en una ventana de 24 meses (distancia)"
+NMES_UATR1_I_24M,N_MESES_UATR||Número de meses desde el último atraso mayor o igual a 1 días de atraso observado en los 24 últimos meses (distancia)
+NMES_UATR3_I_24M,N_MESES_UATR||Número de meses desde el último atraso mayor o igual a 3 días de atraso observado en los 24 últimos meses (distancia)
+N_BU1000_01_18M,MESES BUEN COMPORTAMIENTO (0 ó 1) CON MATERIALIDAD>1000||Nro. De Meses con calificación 'NORMAL' o 'CPP'  y materialidad>1000 en los últimos 18 meses
+N_BU1000_ALI_18M,MESES BUEN COMPORTAMIENTO ALINEADO CON MATERIALIDAD > 1000||Nro. de meses con buen comportamiento alineado en los últimos 18 meses (umbral de materialidad = 1000 soles)
+N_BU100_12M,MESES BUEN COMPORTAMIENTO CON MATERIALIDAD > 100||Nro. de meses con buen comportamiento en los últimos 12 meses (umbral de materialidad = 100 soles)
+N_BU_01_12M,MESES BUEN COMPORTAMIENTO (0 ó 1) CON MATERIALIDAD>0||Nro. De Meses con calificación 'NORMAL' o 'CPP'  y materialidad>0 en los últimos 12 meses
+N_BU_12M,MESES BUEN COMPORTAMIENTO CON MATERIALIDAD > 0||Nro. de meses con buen comportamiento en los últimos 12 meses (umbral de materialidad = 0 soles)
+N_DEU_ACTSH_18M,NRO. DE MESES CON DEUDA ACTIVA SIN HIPOTECARIA||Nro. de meses con deuda activa sin deuda hipotecaria en los últimos 18 meses
+N_NEG_24M,"NRO. DE MESES CON DEUDA NEGOCIO||Nro. de meses con deuda negocio(micro,pequeña y mediana) en los últimos 24 meses"
+N_NOR_12M,"NRO. DE MESES CON CALIFICACIÓN ""NORMAL""||Nro. de meses que el cliente fue calificado como 'NORMAL'. En los últimos 12 meses"
+N_NOR_24M,"NRO. DE MESES CON CALIFICACIÓN ""NORMAL""||Nro. de meses que el cliente fue calificado como 'NORMAL'. En los últimos 24 meses"
+N_ULT_DIFNOR_12M,"NRO. DE MESES DESDE QUE LA ÚLTIMA VEZ QUE SE REPORTÓ CALIFICACIÓN DIFERENTE ""NORMAL""||Nro. De meses de la última vez que se reportó calificación diferente a 'Normal' en los últimos 12 meses"
+N_ULT_DIFNOR_24M,"NRO. DE MESES DESDE QUE LA ÚLTIMA VEZ QUE SE REPORTÓ CALIFICACIÓN DIFERENTE ""NORMAL""||Nro. De meses de la última vez que se reportó calificación diferente a 'Normal' en los últimos 24 meses"
+N_ULT_NOR_ALI_24M,"NRO. DE MESES DESDE QUE LA ÚLTIMA VEZ QUE SE REPORTÓ CALIFICACIÓN ALINEADA ""NORMAL""||Nro. De Meses de la última vez que se reportó calificación alineada 'Normal' en los últimos 24 meses"
+PROM_DEUREV_24M,PROMEDIO DEUDA REVOLVENTE||Promedio de la deuda revolvente en los últimos 24 meses
+PROM_DEUVNCD_12M,PROMEDIO DEUDA VENCIDA||Promedio de deuda vencida en los últimos 12 meses
+RMAX_DACT_DACTSH_24M,MÁXIMA DEUDA ACTIVA RESPECTO A LA MÁXIMA DEUDA ACTIVA S/HIP.||Ratio de la máxima deuda activa respecto a la máxima deuda activa sin deuda hipotecaria en los últimos 24 meses
+RMAX_DREV_DDIR_24M,MÁXIMA DEUDA REVOLVENTE RESPECTO A LA MÁXIMA DEUDA DIRECTA||Ratio de la máxima deuda revolvente sobre la máxima deuda directa en los últimos 24 meses
+RMAX_DVNCD_DDIR_12M,MÁXIMA DEUDA VENCIDA RESPECTO A LA MÁXIMA DEUDA DIRECTA||Ratio de la máxima deuda vencida sobre la máxima deuda directa en los últimos 12 meses
+RTOT_DACT_DTOT_24M,TOTAL DEUDA ACTIVA RESPECTO AL TOTAL DE DEUDA TOTAL||Ratio del total de la deuda activa sobre el total de la deuta total en los últimos 24 meses
+RTOT_DVNCD_DDIR_12M,TOTAL DEUDA VENCIDA RESPECTO AL TOTAL DE DEUDA DIRECTA||Ratio del total de la deuda vencida sobre el total de la deuda directa en los últimos 12 meses
+R_DREV_DDIR_24M,DEUDA REVOLVENTE PROMEDIO RESPECTO A LA DEUDA DIRECTA PROMEDIO||Ratio del promedio de la deuda revolvente sobre el promedio de la deuda directa en los últimos  24 meses
+R_DVNCD_DDIR_12M,DEUDA VENCIDA PROMEDIO RESPECTO A LA DEUDA DIRECTA PROMEDIO||Ratio del promedio de la deuda vencida sobre el promedio de la deuda directa en los últimos 12 meses
+VAR_MAX_CAL_ACTU_24M,VARIACIÓN DE CALIFICACIÓN (CONSIDERANDO MÁXIMO)||Máxima calificación en los últimos 24 meses (se consideran nulos) respecto califación actual
+VAR_PROM_DEUDIR_ACTU_12M,VARIACIÓN DE DEUDA DIRECTA (CONSIDERANDO PROMEDIO)||Deuda directa promedio en los últimos 12 meses respecto a la deuda directa actual
+VAR_PROM_ENT_ACTU_24M,VARIACIÓN DE ENTIDADES ACREEDORAS (CONSIDERANDO PROMEDIO)||Promedio de nro. de entidades en los últimos 18 meses respecto al nro. de entidades actual

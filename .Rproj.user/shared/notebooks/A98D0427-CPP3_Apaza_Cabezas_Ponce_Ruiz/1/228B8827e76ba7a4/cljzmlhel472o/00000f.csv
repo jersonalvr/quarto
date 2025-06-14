@@ -1,4 +1,0 @@
-"0","# Limpiar la caché de la GPU para liberar memoria"
-"0","if device.type == 'cuda':"
-"0","    torch.cuda.empty_cache()"
-"0",""

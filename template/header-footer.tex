@@ -1,0 +1,46 @@
+% Configuración específica para el TOC
+\AtBeginDocument{
+  % Redefinir el comando del TOC para aplicar el estilo correcto
+  \let\oldtableofcontents\tableofcontents
+  \renewcommand{\tableofcontents}{%
+    \pagestyle{toc}%
+    \pagenumbering{roman}%
+    \setcounter{page}{1}%
+    \oldtableofcontents
+  }
+  
+  % También para lista de figuras y tablas si las tienes
+  \let\oldlistoffigures\listoffigures
+  \renewcommand{\listoffigures}{
+    \pagestyle{toc}
+    \hypersetup{linkcolor=black}
+    \oldlistoffigures
+  }
+  
+  \let\oldlistoftables\listoftables
+  \renewcommand{\listoftables}{
+    \pagestyle{toc}
+    \hypersetup{linkcolor=black}
+    \oldlistoftables
+    \cleardoublepage
+    \pagenumbering{arabic}
+    \setcounter{page}{1}
+    \pagestyle{posttoc}
+  }
+}
+
+\fancypagestyle{posttoc}{
+  % Configuración del header para páginas normales
+  \fancyhf{}
+  \fancyhead[C]{
+    \makebox[\textwidth][c]{
+      \includegraphics[width=\paperwidth]{assets/encabezado.png}
+    }
+  }
+  \renewcommand{\headrulewidth}{0pt}
+
+  % Configuración del footer para páginas normales
+  \fancyfoot[L]{\footerfont Oficina de Gestión de la Calidad}
+  \fancyfoot[R]{\footerfont \href{https://www.icontinental.edu.pe}{\textcolor{black}{\textbf{icontinental}.edu.pe}} \,|\, \thepage}
+  \renewcommand{\footrulewidth}{0pt}
+}

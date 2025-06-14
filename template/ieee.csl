@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="sort-only" default-locale="es-ES">
+  <info>
+    <title>IEEE - Español y Portugués</title>
+    <title-short>IEEE ES-PT</title-short>
+    <id>http://www.zotero.org/styles/ieee-spanish-portuguese</id>
+    <link href="http://www.zotero.org/styles/ieee-spanish-portuguese" rel="self"/>
+    <link href="http://www.ieee.org/documents/ieeecitationref.pdf" rel="documentation"/>
+    <author>
+      <name>Modificado para español y portugués</name>
+    </author>
+    <category citation-format="numeric"/>
+    <category field="engineering"/>
+    <summary>Estilo IEEE modificado con soporte completo para caracteres especiales en español y portugués</summary>
+    <updated>2025-05-31T12:00:00+00:00</updated>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
+  </info>
+  
+  <!-- Términos localizados -->
+  <locale xml:lang="es">
+    <terms>
+      <term name="accessed">consultado</term>
+      <term name="and">y</term>
+      <term name="and others">y otros</term>
+      <term name="anonymous">anónimo</term>
+      <term name="anonymous" form="short">anón.</term>
+      <term name="at">en</term>
+      <term name="available at">disponible en</term>
+      <term name="by">por</term>
+      <term name="circa">circa</term>
+      <term name="circa" form="short">c.</term>
+      <term name="cited">citado</term>
+      <term name="edition">edición</term>
+      <term name="edition" form="short">ed.</term>
+      <term name="et-al">et al.</term>
+      <term name="forthcoming">próximo</term>
+      <term name="from">de</term>
+      <term name="ibid">ibíd.</term>
+      <term name="in">en</term>
+      <term name="in press">en prensa</term>
+      <term name="internet">internet</term>
+      <term name="interview">entrevista</term>
+      <term name="letter">carta</term>
+      <term name="no date">sin fecha</term>
+      <term name="no date" form="short">s.f.</term>
+      <term name="online">en línea</term>
+      <term name="presented at">presentado en</term>
+      <term name="reference">referencia</term>
+      <term name="reference" form="short">ref.</term>
+      <term name="retrieved">recuperado</term>
+      <term name="scale">escala</term>
+      <term name="version">versión</term>
+      <term name="ad">d.C.</term>
+      <term name="bc">a.C.</term>
+      <term name="page">página</term>
+      <term name="page" form="short">p.</term>
+      <term name="pages">páginas</term>
+      <term name="pages" form="short">pp.</term>
+      <term name="volume">volumen</term>
+      <term name="volume" form="short">vol.</term>
+      <term name="technical report">informe técnico</term>
+      <term name="technical report" form="short">inf. téc.</term>
+      <term name="number">número</term>
+      <term name="number" form="short">núm.</term>
+      <term name="doi">DOI</term>
+      <term name="organization">organización</term>
+      <term name="institution">institución</term>
+    </terms>
+  </locale>
+  
+  <locale xml:lang="pt">
+    <terms>
+      <term name="accessed">acessado</term>
+      <term name="and">e</term>
+      <term name="and others">e outros</term>
+      <term name="anonymous">anônimo</term>
+      <term name="anonymous" form="short">anôn.</term>
+      <term name="at">em</term>
+      <term name="available at">disponível em</term>
+      <term name="by">por</term>
+      <term name="circa">circa</term>
+      <term name="circa" form="short">c.</term>
+      <term name="cited">citado</term>
+      <term name="edition">edição</term>
+      <term name="edition" form="short">ed.</term>
+      <term name="et-al">et al.</term>
+      <term name="forthcoming">próximo</term>
+      <term name="from">de</term>
+      <term name="ibid">ibid.</term>
+      <term name="in">em</term>
+      <term name="in press">no prelo</term>
+      <term name="internet">internet</term>
+      <term name="interview">entrevista</term>
+      <term name="letter">carta</term>
+      <term name="no date">sem data</term>
+      <term name="no date" form="short">s.d.</term>
+      <term name="online">online</term>
+      <term name="presented at">apresentado em</term>
+      <term name="reference">referência</term>
+      <term name="reference" form="short">ref.</term>
+      <term name="retrieved">recuperado</term>
+      <term name="scale">escala</term>
+      <term name="version">versão</term>
+      <term name="ad">d.C.</term>
+      <term name="bc">a.C.</term>
+      <term name="page">página</term>
+      <term name="page" form="short">p.</term>
+      <term name="pages">páginas</term>
+      <term name="pages" form="short">pp.</term>
+      <term name="volume">volume</term>
+      <term name="volume" form="short">vol.</term>
+      <term name="technical report">relatório técnico</term>
+      <term name="technical report" form="short">rel. téc.</term>
+      <term name="number">número</term>
+      <term name="number" form="short">núm.</term>
+      <term name="doi">DOI</term>
+      <term name="organization">organização</term>
+      <term name="institution">instituição</term>
+    </terms>
+  </locale>
+
+  <!-- Macros -->
+  <macro name="edition">
+    <choose>
+      <if type="bill book chapter graphic legal_case legislation motion_picture paper-conference report song" match="any">
+        <choose>
+          <if is-numeric="edition">
+            <group delimiter=" ">
+              <number variable="edition" form="ordinal"/>
+              <text term="edition" form="short"/>
+            </group>
+          </if>
+          <else>
+            <text variable="edition" text-case="capitalize-first" suffix="."/>
+          </else>
+        </choose>
+      </if>
+    </choose>
+  </macro>
+
+  <macro name="issued">
+    <choose>
+      <if type="article-journal report" match="any">
+        <date variable="issued">
+          <date-part name="month" form="short" suffix=" "/>
+          <date-part name="year"/>
+        </date>
+      </if>
+      <else-if type="bill book chapter graphic legal_case legislation motion_picture paper-conference song thesis" match="any">
+        <date variable="issued">
+          <date-part name="year"/>
+        </date>
+      </else-if>
+      <else>
+        <date variable="issued">
+          <date-part name="day" suffix="-"/>
+          <date-part name="month" form="short" suffix="-"/>
+          <date-part name="year"/>
+        </date>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="author">
+    <names variable="author">
+      <name and="text" et-al-min="7" et-al-use-first="1" initialize-with=". "/>
+      <label form="short" prefix=", " text-case="capitalize-first"/>
+      <substitute>
+        <names variable="editor"/>
+        <names variable="translator"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <macro name="editor">
+    <names variable="editor">
+      <name initialize-with=". " delimiter=", " and="text"/>
+      <label form="short" prefix=", " text-case="capitalize-first"/>
+    </names>
+  </macro>
+
+  <macro name="locators">
+    <group delimiter=", ">
+      <text macro="edition"/>
+      <group delimiter=" ">
+        <text term="volume" form="short"/>
+        <number variable="volume" form="numeric"/>
+      </group>
+      <group delimiter=" ">
+        <number variable="number-of-volumes" form="numeric"/>
+        <text term="volume" form="short" plural="true"/>
+      </group>
+    </group>
+  </macro>
+
+  <macro name="title">
+    <choose>
+      <if type="bill book graphic legal_case legislation motion_picture song" match="any">
+        <text variable="title" font-style="italic"/>
+      </if>
+      <else>
+        <text variable="title" quotes="true"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="publisher">
+    <choose>
+      <if type="bill book chapter graphic legal_case legislation motion_picture paper-conference song" match="any">
+        <group delimiter=": ">
+          <text variable="publisher-place"/>
+          <text variable="publisher"/>
+        </group>
+      </if>
+      <else>
+        <group delimiter=", ">
+          <text variable="publisher"/>
+          <text variable="publisher-place"/>
+        </group>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="event">
+    <choose>
+      <if type="paper-conference">
+        <choose>
+          <if variable="container-title">
+            <group delimiter=", ">
+              <text variable="container-title" font-style="italic"/>
+              <text variable="event-place"/>
+            </group>
+          </if>
+          <else>
+            <group delimiter=", ">
+              <text variable="event" font-style="italic"/>
+              <text variable="event-place"/>
+            </group>
+          </else>
+        </choose>
+      </if>
+    </choose>
+  </macro>
+
+  <macro name="access">
+    <choose>
+      <if type="webpage">
+        <choose>
+          <if variable="URL">
+            <group delimiter=". ">
+              <text term="online" text-case="capitalize-first"/>
+              <group delimiter=": ">
+                <text term="available at" text-case="capitalize-first"/>
+                <text variable="URL"/>
+              </group>
+              <group prefix="[" suffix="]" delimiter=": ">
+                <text term="accessed" text-case="capitalize-first"/>
+                <date variable="accessed">
+                  <date-part name="day" suffix="-"/>
+                  <date-part name="month" form="short" suffix="-"/>
+                  <date-part name="year"/>
+                </date>
+              </group>
+            </group>
+          </if>
+        </choose>
+      </if>
+    </choose>
+  </macro>
+
+  <macro name="page">
+    <group>
+      <label variable="page" form="short" suffix=" "/>
+      <text variable="page"/>
+    </group>
+  </macro>
+
+  <macro name="doi">
+    <text variable="DOI" prefix="DOI: "/>
+  </macro>
+
+  <macro name="report-details">
+    <choose>
+      <if type="report">
+        <group delimiter=" ">
+          <text term="technical report" form="short"/>
+          <text variable="number"/>
+        </group>
+      </if>
+    </choose>
+  </macro>
+
+  <!-- Citas en el texto -->
+  <citation collapse="citation-number">
+    <sort>
+      <key variable="citation-number"/>
+    </sort>
+    <layout prefix="[" suffix="]" delimiter="], [">
+      <text variable="citation-number"/>
+    </layout>
+  </citation>
+
+  <!-- Bibliografía -->
+  <bibliography entry-spacing="0" second-field-align="flush">
+    <layout>
+      <text variable="citation-number" prefix="[" suffix="]"/>
+      <choose>
+        <if type="article-journal">
+          <group suffix=".">
+            <text macro="author" suffix=", "/>
+            <group delimiter=", ">
+              <text macro="title"/>
+              <text variable="container-title" font-style="italic" form="short"/>
+              <group delimiter=", ">
+                <group>
+                  <text term="volume" form="short" suffix=" "/>
+                  <text variable="volume"/>
+                </group>
+                <group>
+                  <text term="issue" form="short" suffix=" "/>
+                  <text variable="issue"/>
+                </group>
+                <text macro="page"/>
+                <text macro="issued"/>
+                <text variable="publisher"/>
+                <text macro="doi"/>
+              </group>
+            </group>
+          </group>
+        </if>
+        <else-if type="paper-conference">
+          <group suffix=".">
+            <text macro="author" suffix=", "/>
+            <group delimiter=", ">
+              <text macro="title"/>
+              <text macro="event"/>
+              <text macro="issued"/>
+              <text macro="page"/>
+              <text variable="organization"/>
+            </group>
+          </group>
+        </else-if>
+        <else-if type="book">
+          <group suffix=".">
+            <text macro="author" suffix=", "/>
+            <group delimiter=", ">
+              <text macro="title"/>
+              <text macro="locators"/>
+              <text macro="publisher"/>
+              <text macro="issued"/>
+            </group>
+          </group>
+        </else-if>
+        <else-if type="chapter">
+          <group suffix=".">
+            <text macro="author" suffix=", "/>
+            <group delimiter=", ">
+              <text macro="title"/>
+              <group delimiter=" ">
+                <text term="in"/>
+                <text variable="container-title" font-style="italic"/>
+              </group>
+              <text macro="locators"/>
+              <text macro="editor"/>
+              <text macro="publisher"/>
+              <text macro="issued"/>
+              <text macro="page"/>
+            </group>
+          </group>
+        </else-if>
+        <else-if type="report">
+          <group suffix=".">
+            <text macro="author" suffix=", "/>
+            <group delimiter=", ">
+              <text macro="title"/>
+              <text macro="report-details"/>
+              <text variable="institution"/>
+              <text macro="issued"/>
+            </group>
+          </group>
+        </else-if>
+        <else-if type="webpage">
+          <group suffix=".">
+            <text macro="author" suffix=", "/>
+            <group delimiter=", ">
+              <text macro="title"/>
+              <text variable="container-title" font-style="italic"/>
+              <text macro="issued"/>
+              <text macro="access"/>
+            </group>
+          </group>
+        </else-if>
+        <else>
+          <group suffix=".">
+            <text macro="author" suffix=", "/>
+            <group delimiter=", ">
+              <text macro="title"/>
+              <text variable="container-title" font-style="italic"/>
+              <text macro="locators"/>
+              <text macro="publisher"/>
+              <text macro="page"/>
+              <text macro="issued"/>
+              <text macro="doi"/>
+            </group>
+          </group>
+        </else>
+      </choose>
+    </layout>
+  </bibliography>
+</style>
