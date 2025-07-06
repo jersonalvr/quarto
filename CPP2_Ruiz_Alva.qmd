@@ -331,20 +331,32 @@ recommendations_fig.show()
 ### Conclusiones y Recomendaciones
 
 **Hallazgos principales:**
+
 - La clase socioeconómica fue el factor más determinante en la supervivencia
+
 - El género mostró una clara diferencia en las tasas de supervivencia
+
 - Los grupos familiares medianos tuvieron mejor tasa de supervivencia
 
+
 **Recomendaciones operativas:**
+
 1. **Protocolos de evacuación** basados en análisis de riesgo
+
 2. **Capacitación diferenciada** por grupos demográficos
+
 3. **Sistemas de alerta temprana** para familias grandes
+
 4. **Revisión de políticas** de emergencia marítima
 
 **Próximos pasos:**
+
 - Implementar modelo predictivo en tiempo real
+
 - Desarrollar dashboard operativo para emergencias
+
 - Validar recomendaciones con datos históricos adicionales
+
 :::
 
 ## Row {height=30%}
@@ -353,9 +365,13 @@ recommendations_fig.show()
 ### Metodología Aplicada
 
 Este análisis sigue el framework de **4 tipos de analítica** aprendido en clase:
+
 - **Descriptivo**: ¿Qué pasó?
+
 - **Diagnóstico**: ¿Por qué pasó?
+
 - **Predictivo**: ¿Qué pasará?
+
 - **Prescriptivo**: ¿Qué debemos hacer?
 
 Utilizando datos del Titanic como caso de estudio para demostrar técnicas de análisis de datos y toma de decisiones conforme a los contenidos del curso **"Análisis de la información y la Decisión"**.
@@ -371,18 +387,27 @@ Utilizando datos del Titanic como caso de estudio para demostrar técnicas de an
 Basándose en las notas de clase proporcionadas, este dashboard implementa varios conceptos clave:
 
 **🧠 Modelos y Apoyo para la Toma de Decisiones:**
+
 - Se aplicaron los 4 tipos de análisis (descriptivo, diagnóstico, predictivo, prescriptivo)
+
 - Se utilizó el enfoque de **recolección de datos** y **evaluación de alternativas**
+
 - Se implementó la separación entre **inteligencia operativa** (dashboard interactivo) e **inteligencia empresarial** (análisis histórico)
 
 **📊 Análisis de Datos y Aplicaciones Prácticas:**
+
 - Se siguió el modelo del profesor **Gino Taipe Miranda** con ejercicios prácticos del dataset Titanic
+
 - Se aplicó la premisa de que el **análisis prescriptivo depende del predictivo**
+
 - Se utilizaron herramientas modernas como **Python y Plotly** para visualización
 
 **🧾 Reportes vs Dashboards:**
+
 - Se optó por un **dashboard visual** en lugar de un reporte extenso
+
 - Se priorizó la **fácil interpretación** sobre el detalle exhaustivo
+
 - Se balanceó la **claridad con la profundidad analítica**
 :::
 
@@ -390,16 +415,25 @@ Basándose en las notas de clase proporcionadas, este dashboard implementa vario
 ### Elementos para la Toma de Decisiones Implementados
 
 **⚙️ Los 4 Elementos Esenciales:**
+
 1. **Humanos**: Dashboard diseñado para diferentes tipos de usuarios
+
 2. **Tareas**: Análisis estructurado desde descriptivo hasta prescriptivo
+
 3. **Datos**: Dataset del Titanic como materia prima
+
 4. **Tecnología**: Quarto + Python + Plotly adaptado a dispositivos web
 
 **🎨 Experiencia de Usuario (UX):**
+
 - **Accesibilidad**: Navegación clara y estructura lógica
+
 - **Claridad**: Visualizaciones interpretables
+
 - **Credibilidad**: Datos verificables y metodología transparente
+
 - **Consistencia**: Estilo visual uniforme
+
 - **Usabilidad**: Interfaz intuitiva con elementos interactivos
 :::
 
@@ -407,14 +441,21 @@ Basándose en las notas de clase proporcionadas, este dashboard implementa vario
 ### Data Storytelling Aplicado
 
 **📚 Método Implementado:**
+
 - **Estructura Minto**: Idea principal (supervivencia del Titanic) → Razones (factores de riesgo) → Evidencias (análisis estadístico)
+
 - **Narrativa progresiva**: Desde "¿qué pasó?" hasta "¿qué debemos hacer?"
+
 - **Impacto emocional**: Uso de colores, iconos y visualizaciones que conectan con la audiencia
 
 **🛠️ Tecnologías Utilizadas:**
+
 - **Quarto Dashboard**: Para estructura y presentación
+
 - **Python**: Para análisis de datos
+
 - **Plotly**: Para visualizaciones interactivas
+
 - **CSS personalizado**: Para mantener identidad institucional
 
 Esta implementación demuestra la aplicación práctica de todos los conceptos del curso en un proyecto real de análisis de datos.
