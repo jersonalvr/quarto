@@ -1,0 +1,205 @@
+/*-- scss:defaults --*/
+
+// Colores principales basados en la plantilla
+$primary: #2c3e50;
+$secondary: #34495e;
+$success: #27ae60;
+$info: #3498db;
+$warning: #f39c12;
+$danger: #e74c3c;
+$light: #ecf0f1;
+$dark: #2c3e50;
+
+// Tipografía similar a Arial
+$font-family-sans-serif: "Century Gothic", Arial, sans-serif;
+$font-size-base: 0.95rem;
+$line-height-base: 1.4;
+
+// Espaciado
+$spacer: 1rem;
+
+/*-- scss:rules --*/
+
+// Estilo del header principal
+.navbar {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  border-bottom: 3px solid #a6a6a6;
+  padding: 1rem 0;
+  
+  .navbar-brand {
+    color: white !important;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .navbar-nav .nav-link {
+    color: white !important;
+    
+    &:hover {
+      color: #ecf0f1 !important;
+    }
+  }
+}
+
+// Estilo del sidebar
+.sidebar {
+  background-color: #f8f9fa;
+  border-right: 2px solid #a6a6a6;
+  
+  .sidebar-title {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 1rem;
+    margin: -1rem -1rem 1rem -1rem;
+    font-weight: bold;
+    text-align: center;
+  }
+}
+
+// Estilo de las cards
+.card {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 1rem;
+  
+  .card-header {
+    background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+    border-bottom: 2px solid #a6a6a6;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  
+  .card-body {
+    padding: 1.25rem;
+  }
+}
+
+// Estilo de los value boxes
+.valuebox {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  
+  .valuebox-title {
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .valuebox-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  
+  .valuebox-icon {
+    opacity: 0.8;
+  }
+}
+
+// Títulos de secciones
+h1, h2, h3, h4, h5, h6 {
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  
+  &.dashboard-page-title {
+    border-bottom: 3px solid #a6a6a6;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+// Estilo para gráficos
+.plotly {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+// Footer institucional
+.footer-info {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: auto;
+  
+  a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-weight: bold;
+    
+    &:hover {
+      color: white;
+    }
+  }
+}
+
+// Responsividad
+@media (max-width: 768px) {
+  .valuebox-value {
+    font-size: 2rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+}
+
+// Estilo para tablas
+.table {
+  font-size: 0.9rem;
+  
+  th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #a6a6a6;
+    color: #2c3e50;
+    font-weight: 600;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f8f9fa;
+  }
+}
+
+// Personalización de elementos interactivos
+.btn-primary {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  border-color: #2c3e50;
+  
+  &:hover {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+    border-color: #34495e;
+  }
+}
+
+// Estilo para alerts/callouts
+.callout {
+  border-left: 4px solid #a6a6a6;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0 8px 8px 0;
+  
+  &.callout-important {
+    border-left-color: #e74c3c;
+    background-color: #fdf2f2;
+  }
+  
+  &.callout-note {
+    border-left-color: #3498db;
+    background-color: #f0f8ff;
+  }
+  
+  &.callout-tip {
+    border-left-color: #27ae60;
+    background-color: #f0fff4;
+  }
+  
+  &.callout-warning {
+    border-left-color: #f39c12;
+    background-color: #fffbf0;
+  }
+}
